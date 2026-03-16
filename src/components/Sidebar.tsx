@@ -20,6 +20,7 @@ import {
   Brain,
   CircleHelp,
   Monitor,
+  PanelTop,
 } from 'lucide-react';
 
 // Custom icon component for Pallet Town using the pokemon logo
@@ -43,6 +44,7 @@ const navItems = [
   { href: '/usage', icon: BarChart2, label: 'Usage', shortcut: '0' },
   { href: '/memory', icon: Brain, label: 'Memory', shortcut: 'M' },
   { href: '/workspace', icon: Monitor, label: 'Workspace', shortcut: 'W' },
+  { href: '/collaborator', icon: PanelTop, label: 'Collaborator', shortcut: 'C' },
   { href: '/pallet-town', icon: PalletTownIcon, label: 'ClaudeMon' },
 ];
 
