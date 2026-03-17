@@ -250,24 +250,25 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl lg:text-2xl font-bold tracking-tight text-foreground">Dashboard</h1>
+          <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-text-muted">Overview</div>
+          <h1 className="mt-1 text-[1.8rem] lg:text-[2.2rem] font-semibold tracking-[-0.05em] text-foreground">Dashboard</h1>
           <p className="text-muted-foreground text-xs lg:text-sm mt-1 hidden sm:block">
             Monitor your AI Agents in real-time
           </p>
         </div>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
           {/* View Mode Toggle */}
-          <div className="flex items-center gap-1 p-1 bg-secondary border border-border" style={{ borderRadius: 10 }}>
+          <div className="flex items-center gap-1 p-1 bg-secondary/90 border border-border shadow-[inset_0_1px_0_rgba(255,255,255,0.45)]" style={{ borderRadius: 16 }}>
             <button
               onClick={() => setViewMode('terminals')}
               className={`
                 flex items-center gap-1.5 lg:gap-2 px-2 lg:px-3 py-1.5 text-xs lg:text-sm font-medium transition-all
                 ${viewMode === 'terminals'
-                  ? 'bg-foreground text-background'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
                 }
               `}
-              style={{ borderRadius: 7 }}
+              style={{ borderRadius: 12 }}
             >
               <TerminalSquare className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
               <span className="hidden sm:inline">Terminals</span>
@@ -279,11 +280,11 @@ export default function Dashboard() {
               className={`
                 flex items-center gap-1.5 lg:gap-2 px-2 lg:px-3 py-1.5 text-xs lg:text-sm font-medium transition-all
                 ${viewMode === 'canvas'
-                  ? 'bg-foreground text-background'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
                 }
               `}
-              style={{ borderRadius: 7 }}
+              style={{ borderRadius: 12 }}
             >
               <LayoutGrid className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
               Board
@@ -293,11 +294,11 @@ export default function Dashboard() {
               className={`
                 flex items-center gap-1.5 lg:gap-2 px-2 lg:px-3 py-1.5 text-xs lg:text-sm font-medium transition-all
                 ${viewMode === 'world'
-                  ? 'bg-foreground text-background'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
                 }
               `}
-              style={{ borderRadius: 7 }}
+              style={{ borderRadius: 12 }}
             >
               <Globe className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
               <span className="hidden sm:inline">3D View</span>
@@ -309,8 +310,8 @@ export default function Dashboard() {
           <div className="text-right text-xs text-muted-foreground hidden sm:block">
             <div className="flex items-center gap-2 justify-end">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-green opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-green"></span>
               </span>
               <span>{activeSessions.length} active session{activeSessions.length !== 1 ? 's' : ''}</span>
             </div>
@@ -335,7 +336,7 @@ export default function Dashboard() {
       {/* 3D World View */}
       {viewMode === 'world' && (
         <div
-          className="border border-border bg-card overflow-hidden"
+          className="border border-border bg-card overflow-hidden shadow-[0_18px_42px_rgba(57,47,32,0.08)]"
           style={{ height: 'calc(100vh - 200px)', minHeight: '400px' }}
         >
           <WorldErrorBoundary>
@@ -347,7 +348,7 @@ export default function Dashboard() {
       {/* Canvas View */}
       {viewMode === 'canvas' && (
         <div
-          className="border border-border bg-card overflow-hidden"
+          className="border border-border bg-card overflow-hidden shadow-[0_18px_42px_rgba(57,47,32,0.08)]"
           style={{ height: 'calc(100vh - 200px)', minHeight: '400px' }}
         >
           <CanvasView />
@@ -357,7 +358,7 @@ export default function Dashboard() {
       {/* Terminals View */}
       {viewMode === 'terminals' && (
         <div
-          className="border border-border bg-card overflow-hidden"
+          className="border border-border bg-card overflow-hidden shadow-[0_18px_42px_rgba(57,47,32,0.08)]"
           style={{ height: 'calc(100vh - 130px)', minHeight: '400px' }}
         >
           <TerminalsView />
@@ -433,7 +434,7 @@ export default function Dashboard() {
 
           {/* Model Usage */}
           {stats?.modelUsage && Object.keys(stats.modelUsage).length > 0 && (
-            <div className="border border-border bg-card p-6">
+            <div className="border border-border bg-card p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.48)]">
               <h3 className="text-sm font-medium mb-4 flex items-center gap-2 text-foreground">
                 <Bot className="w-4 h-4 text-muted-foreground" />
                 Model Usage
@@ -444,7 +445,7 @@ export default function Dashboard() {
                   const totalTokens = usage.inputTokens + usage.outputTokens;
 
                   return (
-                    <div key={model} className="p-4 bg-secondary border border-border hover:border-white/30 transition-all">
+                    <div key={model} className="p-4 bg-secondary border border-border hover:border-primary/20 transition-all">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-medium text-foreground">
                           {modelName}
@@ -482,7 +483,7 @@ export default function Dashboard() {
           )}
 
           {/* Activity by Hour */}
-          <div className="border border-border bg-card p-4">
+          <div className="border border-border bg-card p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.48)]">
             <h3 className="text-sm font-medium mb-3 flex items-center gap-2 text-foreground">
               <Clock className="w-4 h-4 text-muted-foreground" />
               Activity by Hour
@@ -502,7 +503,7 @@ export default function Dashboard() {
                         {hour}:00 - {count} sessions
                       </div>
                       <div
-                        className={`w-full transition-all ${count > 0 ? 'bg-white' : 'bg-secondary'}`}
+                        className={`w-full rounded-t-[10px] transition-all ${count > 0 ? 'bg-primary/80' : 'bg-secondary'}`}
                         style={{ height: `${Math.max(height, 4)}%`, minHeight: count > 0 ? '8px' : '4px' }}
                       />
                     </div>
@@ -524,7 +525,7 @@ export default function Dashboard() {
 
           {/* Recent Messages */}
           {recentHistory.length > 0 && (
-            <div className="border border-border bg-card p-6">
+            <div className="border border-border bg-card p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.48)]">
               <h3 className="text-sm font-medium mb-4 flex items-center gap-2 text-foreground">
                 <History className="w-4 h-4 text-muted-foreground" />
                 Recent Messages
@@ -545,7 +546,7 @@ export default function Dashboard() {
                   return (
                     <div
                       key={`${entry.timestamp}-${index}`}
-                      className="p-3 bg-secondary border border-border hover:border-white/30 transition-all"
+                      className="p-3 bg-secondary border border-border hover:border-primary/20 transition-all"
                     >
                       <div className="flex items-start gap-3">
                         {/* Agent avatar or default */}
@@ -561,7 +562,7 @@ export default function Dashboard() {
                                 {agent.name || `Agent ${agent.id.slice(0, 6)}`}
                               </span>
                             )}
-                            <span className="text-xs px-1.5 py-0.5 bg-white/10 text-muted-foreground">
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-bg-tertiary text-muted-foreground">
                               {projectName}
                             </span>
                             <span className="text-xs text-muted-foreground ml-auto shrink-0">
@@ -584,7 +585,7 @@ export default function Dashboard() {
 
           {/* Agents Overview */}
           {agents.length > 0 && (
-            <div className="border border-border bg-card p-6">
+            <div className="border border-border bg-card p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.48)]">
               <h3 className="text-sm font-medium mb-4 flex items-center gap-2 text-foreground">
                 <Bot className="w-4 h-4 text-muted-foreground" />
                 Agents Overview
@@ -603,7 +604,7 @@ export default function Dashboard() {
                   return (
                     <div
                       key={agent.id}
-                      className="p-3 bg-secondary border border-border flex items-center gap-3 hover:border-white/30 transition-all"
+                      className="p-3 bg-secondary border border-border flex items-center gap-3 hover:border-primary/20 transition-all"
                     >
                       <div className="relative">
                         <div className={`w-10 h-10 ${agent.name?.toLowerCase() === 'bitwonka' ? 'bg-green-500/20' : 'bg-card'} flex items-center justify-center text-xl`}>

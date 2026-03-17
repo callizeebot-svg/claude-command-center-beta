@@ -86,18 +86,19 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
         initial={false}
         animate={{ width: sidebarWidth }}
         transition={{ duration: 0.2, ease: 'easeInOut' }}
-        className="fixed left-0 top-0 h-screen bg-card border-r-2 border-r-primary/30 flex-col z-50 hidden lg:flex"
+        className="fixed left-0 top-0 h-screen bg-[linear-gradient(180deg,var(--bg-secondary),var(--bg-primary))] border-r border-r-border-primary/90 flex-col z-50 hidden lg:flex shadow-[12px_0_32px_rgba(52,45,34,0.05)]"
       >
         {/* Drag region - covers macOS traffic light area */}
         <div className="window-drag h-7 shrink-0" />
         {/* Logo */}
-        <div className="h-16 flex items-center px-4 border-b border-border">
+        <div className="h-18 flex items-center px-4 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0">
+            <div className="w-10 h-10 rounded-[14px] overflow-hidden shrink-0 border border-border-primary bg-bg-elevated shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]">
               <img src="/command-center-mark.png" alt="Samins Command Center" className="w-full h-full object-cover" />
             </div>
             {showLabels && (
               <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">Command Center</p>
                 <img src="/command-center-wordmark.png" alt="Samins Command Center" className="h-6 w-auto object-contain" />
               </div>
             )}
@@ -105,7 +106,7 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+        <nav className="flex-1 py-4 px-3 space-y-1.5 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = item.href === '/'
               ? pathname === '/'
@@ -115,10 +116,10 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
                 key={item.href}
                 href={item.href}
                 className={`
-                  group flex items-center gap-3 px-3 py-2.5 transition-all duration-150
+                  group flex items-center gap-3 rounded-[14px] px-3 py-2.5 transition-all duration-150 border border-transparent
                   ${isActive
-                    ? 'bg-primary/20 text-primary font-medium border-l-2 border-primary'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+                    ? 'bg-primary/12 text-primary font-medium border-primary/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary hover:border-border-primary/80'
                   }
                 `}
               >
@@ -148,10 +149,10 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
         {/* Status indicator */}
         {showLabels && (
           <div className="px-4 py-3 border-t border-border">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 rounded-[14px] border border-border-primary bg-bg-elevated/90 px-3 py-2 text-xs text-muted-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-green opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-green"></span>
               </span>
               <span>Connected</span>
             </div>
@@ -164,7 +165,7 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
             type="button"
             onClick={openHelp}
             title="Need Help?"
-            className="w-full flex items-center gap-3 px-5 py-3 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+            className="mx-3 mt-3 flex w-auto items-center gap-3 rounded-[14px] px-3 py-3 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
           >
             <CircleHelp className="w-5 h-5" />
             {showLabels && <span className="text-sm">Need Help?</span>}
@@ -172,9 +173,9 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
           <Link
             href="/settings"
             className={`
-              flex items-center gap-3 px-5 py-3 transition-colors
+              mx-3 my-1 flex items-center gap-3 rounded-[14px] px-3 py-3 transition-colors border border-transparent
               ${pathname === '/settings' || pathname.startsWith('/settings/')
-                ? 'bg-primary/20 text-primary border-l-2 border-primary'
+                ? 'bg-primary/12 text-primary border-primary/20'
                 : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
               }
             `}
@@ -184,14 +185,14 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
           </Link>
           <button
             onClick={toggleDarkMode}
-            className="w-full flex items-center gap-3 px-5 py-3 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+            className="mx-3 my-1 flex w-auto items-center gap-3 rounded-[14px] px-3 py-3 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
           >
             {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             {showLabels && <span className="text-sm">{darkMode ? 'Light Mode' : 'Dark Mode'}</span>}
           </button>
           <button
             onClick={toggleSidebar}
-            className="w-full flex items-center gap-3 px-5 py-3 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+            className="mx-3 mb-3 mt-1 flex w-auto items-center gap-3 rounded-[14px] px-3 py-3 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
           >
             {sidebarCollapsed ? (
               <ChevronRight className="w-5 h-5" />
@@ -216,13 +217,13 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
           animate={{ x: 0 }}
           exit={{ x: -sidebarWidth }}
           transition={{ duration: 0.2, ease: 'easeInOut' }}
-          className="fixed left-0 top-0 h-screen bg-card border-r border-border flex flex-col z-50 lg:hidden"
+          className="fixed left-0 top-0 h-screen bg-[linear-gradient(180deg,var(--bg-secondary),var(--bg-primary))] border-r border-border flex flex-col z-50 lg:hidden shadow-[12px_0_32px_rgba(52,45,34,0.08)]"
           style={{ width: sidebarWidth }}
         >
           {/* Logo */}
           <div className="h-14 flex items-center px-4 border-b border-border">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0">
+              <div className="w-10 h-10 rounded-[14px] overflow-hidden shrink-0 border border-border-primary bg-bg-elevated shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]">
                 <img src="/command-center-mark.png" alt="Samins Command Center" className="w-full h-full object-cover" />
               </div>
               <img src="/command-center-wordmark.png" alt="Samins Command Center" className="h-6 w-auto object-contain" />
@@ -230,7 +231,7 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+          <nav className="flex-1 py-4 px-3 space-y-1.5 overflow-y-auto">
             {navItems.map((item) => {
               const isActive = item.href === '/'
                 ? pathname === '/'
@@ -241,9 +242,9 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
                   href={item.href}
                   onClick={handleNavClick}
                   className={`
-                    group flex items-center gap-3 px-3 py-2.5 transition-all duration-150
+                    group flex items-center gap-3 rounded-[14px] px-3 py-2.5 transition-all duration-150 border border-transparent
                     ${isActive
-                      ? 'bg-primary/20 text-primary font-medium border-l-2 border-primary'
+                      ? 'bg-primary/12 text-primary font-medium border-primary/20'
                       : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
                     }
                   `}
@@ -266,10 +267,10 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
 
           {/* Status indicator */}
           <div className="px-4 py-3 border-t border-border">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 rounded-[14px] border border-border-primary bg-bg-elevated/90 px-3 py-2 text-xs text-muted-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-green opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-green"></span>
               </span>
               <span>Connected</span>
             </div>
@@ -283,7 +284,7 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
                 openHelp();
                 handleNavClick();
               }}
-              className="w-full flex items-center gap-3 px-5 py-3 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              className="mx-3 mt-3 flex w-auto items-center gap-3 rounded-[14px] px-3 py-3 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
             >
               <CircleHelp className="w-5 h-5" />
               <span className="text-sm">Need Help?</span>
@@ -292,9 +293,9 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
               href="/settings"
               onClick={handleNavClick}
               className={`
-                flex items-center gap-3 px-5 py-3 transition-colors
+                mx-3 my-1 flex items-center gap-3 rounded-[14px] px-3 py-3 transition-colors border border-transparent
                 ${pathname === '/settings' || pathname.startsWith('/settings/')
-                  ? 'bg-primary/20 text-primary border-l-2 border-primary'
+                  ? 'bg-primary/12 text-primary border-primary/20'
                   : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
                 }
               `}
@@ -304,7 +305,7 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
             </Link>
             <button
               onClick={toggleDarkMode}
-              className="w-full flex items-center gap-3 px-5 py-3 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              className="mx-3 mb-3 mt-1 flex w-auto items-center gap-3 rounded-[14px] px-3 py-3 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
             >
               {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
               <span className="text-sm">{darkMode ? 'Light Mode' : 'Dark Mode'}</span>

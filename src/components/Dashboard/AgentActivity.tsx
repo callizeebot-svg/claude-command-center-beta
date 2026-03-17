@@ -24,14 +24,14 @@ export default function AgentActivity() {
   const { agents, projects, tasks } = useStore();
 
   return (
-    <div className="rounded-none-none border border-border-primary bg-bg-secondary overflow-hidden">
+    <div className="border border-border-primary bg-bg-secondary overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.48)]">
       {/* Header */}
       <div className="px-5 py-4 border-b border-border-primary flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Bot className="w-4 h-4 text-accent-purple" />
           <h3 className="text-sm font-medium">Agent Activity</h3>
         </div>
-        <Link href="/agents" className="text-xs text-accent-cyan hover:underline">
+        <Link href="/agents" className="text-xs font-medium text-primary hover:underline">
           View all →
         </Link>
       </div>
@@ -54,11 +54,11 @@ export default function AgentActivity() {
             >
               <div className="flex items-start gap-3">
                 {/* Avatar */}
-                <div className={`relative w-10 h-10 rounded-none-none ${config.bg} flex items-center justify-center`}>
+                <div className={`relative w-10 h-10 ${config.bg} flex items-center justify-center border border-border-primary`}>
                   <Bot className={`w-5 h-5 ${config.color}`} />
                   {agent.status === 'running' && (
                     <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-accent-green rounded-full border border-bg-secondary">
-                      <span className="absolute inset-0 rounded-none-full bg-accent-green animate-ping opacity-75" />
+                      <span className="absolute inset-0 rounded-full bg-accent-green animate-ping opacity-75" />
                     </span>
                   )}
                 </div>
@@ -67,10 +67,10 @@ export default function AgentActivity() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-medium text-sm">{agent.name}</span>
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded-none ${modelColors[agent.model]}`}>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full ${modelColors[agent.model]}`}>
                       {agent.model.toUpperCase()}
                     </span>
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded-none ${config.bg} ${config.color}`}>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full ${config.bg} ${config.color}`}>
                       {config.label}
                     </span>
                   </div>
@@ -82,13 +82,13 @@ export default function AgentActivity() {
                   )}
 
                   {currentTask && agent.status === 'running' && (
-                    <div className="mt-2 p-2 rounded-none bg-bg-tertiary/50 border border-border-primary">
+                    <div className="mt-2 p-2 rounded-[12px] bg-bg-tertiary/50 border border-border-primary">
                       <p className="text-xs text-text-secondary truncate">{currentTask.title}</p>
-                      <div className="mt-1.5 h-1 bg-bg-primary rounded-none-full overflow-hidden">
+                      <div className="mt-1.5 h-1 bg-bg-primary rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${currentTask.progress}%` }}
-                          className="h-full bg-accent-cyan rounded-none-full"
+                          className="h-full bg-primary rounded-full"
                         />
                       </div>
                     </div>

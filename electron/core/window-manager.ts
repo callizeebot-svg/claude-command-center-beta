@@ -1,4 +1,4 @@
-import { BrowserWindow, protocol, app } from 'electron';
+import { BrowserWindow, protocol, app, nativeImage } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import { getAppBasePath } from '../utils';
@@ -21,10 +21,49 @@ export function setMainWindow(window: BrowserWindow | null) {
   mainWindow = window;
 }
 
+function resolvePublicAssetPath(fileName: string): string | undefined {
+  const candidates = [
+    path.join(app.getAppPath(), 'public', fileName),
+    path.join(process.cwd(), 'public', fileName),
+    path.join(__dirname, '..', '..', 'public', fileName),
+    path.join(process.resourcesPath, 'public', fileName),
+  ];
+
+  return candidates.find(candidate => fs.existsSync(candidate));
+}
+
+function applyAppIcon() {
+  if (process.platform !== 'darwin' || !app.dock) {
+    return;
+  }
+
+  const dockIconPath = resolvePublicAssetPath('command-center-mark.png')
+    || resolvePublicAssetPath('icon-512.png');
+
+  if (!dockIconPath) {
+    console.warn('No dock icon asset found for macOS app icon.');
+    return;
+  }
+
+  const dockIcon = nativeImage.createFromPath(dockIconPath);
+  if (dockIcon.isEmpty()) {
+    console.warn(`Failed to load dock icon from ${dockIconPath}`);
+    return;
+  }
+
+  app.dock.setIcon(dockIcon);
+}
+
 /**
  * Create the main application window
  */
 export function createWindow() {
+  applyAppIcon();
+
+  const windowIconPath = process.platform === 'win32'
+    ? resolvePublicAssetPath('favicon.ico')
+    : resolvePublicAssetPath('icon-512.png');
+
   mainWindow = new BrowserWindow({
     width: 1600,
     height: 1000,
@@ -33,6 +72,7 @@ export function createWindow() {
     title: 'Samins Command Center',
     titleBarStyle: 'hiddenInset',
     backgroundColor: '#F5EEE6',
+    ...(windowIconPath ? { icon: windowIconPath } : {}),
     webPreferences: {
       preload: path.join(__dirname, '..', 'preload.js'),
       contextIsolation: true,
@@ -44,7 +84,9 @@ export function createWindow() {
   const isDev = process.env.NODE_ENV === 'development';
   if (isDev) {
     mainWindow.loadURL('http://localhost:3000');
-    mainWindow.webContents.openDevTools();
+    if (process.env.ELECTRON_OPEN_DEVTOOLS === '1') {
+      mainWindow.webContents.openDevTools({ mode: 'detach' });
+    }
   } else {
     // In production, use the custom app:// protocol to properly serve static files
     // This fixes issues with absolute paths like /logo.png not resolving correctly
@@ -70,6 +112,15 @@ export function createWindow() {
  * This must be called before app.whenReady()
  */
 export function registerProtocolSchemes() {
+  if (process.env.NODE_ENV === 'development') {
+    return;
+  }
+
+  if (typeof protocol?.registerSchemesAsPrivileged !== 'function') {
+    console.warn('Electron protocol API is unavailable; skipping privileged protocol registration.');
+    return;
+  }
+
   protocol.registerSchemesAsPrivileged([
     {
       scheme: 'app',
@@ -97,6 +148,11 @@ export function registerProtocolSchemes() {
  * This should be called after app.whenReady() and before loading the window
  */
 export function setupProtocolHandler() {
+  if (typeof protocol?.handle !== 'function') {
+    console.warn('Electron protocol API is unavailable; skipping protocol handlers.');
+    return;
+  }
+
   // Serve local files via local-file:// protocol (for vault image previews etc.)
   // URLs are encoded as: local-file://host/path where host is empty
   // e.g. local-file:///Users/charlie/Desktop/photo.png

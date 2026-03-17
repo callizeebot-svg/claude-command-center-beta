@@ -189,19 +189,19 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <div className="window-drag hidden lg:block fixed top-0 left-0 right-0 h-7 z-[60]" />
 
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-bg-secondary border-b border-border-primary z-40 flex items-center px-4">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-bg-secondary/95 border-b border-border-primary z-40 flex items-center px-4 backdrop-blur-md">
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 -ml-2 text-text-secondary hover:text-text-primary transition-colors"
+          className="window-no-drag p-2 -ml-2 text-text-secondary hover:text-text-primary transition-colors"
           aria-label="Toggle menu"
         >
           {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
         <div className="flex items-center gap-2 ml-2">
-          <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0">
+          <div className="w-8 h-8 rounded-[12px] overflow-hidden shrink-0 border border-border-primary bg-bg-elevated">
             <img src="/command-center-mark.png" alt="Samins Command Center" className="w-full h-full object-cover" />
           </div>
-          <span className="text-base font-semibold tracking-wide text-foreground" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>Samins Command Center</span>
+          <span className="text-base font-semibold tracking-[-0.03em] text-foreground" style={{ fontFamily: "'Manrope', 'Inter', sans-serif" }}>Samins Command Center</span>
         </div>
       </div>
 
@@ -213,7 +213,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="lg:hidden fixed inset-0 bg-black/50 z-40"
+            className="lg:hidden fixed inset-0 bg-[rgba(35,31,26,0.22)] z-40 backdrop-blur-[2px]"
             onClick={() => setMobileMenuOpen(false)}
           />
         )}
@@ -241,7 +241,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4"
+            className="fixed inset-0 bg-[rgba(35,31,26,0.28)] z-[100] flex items-center justify-center p-4 backdrop-blur-[3px]"
             onClick={() => setUpdateDismissed(true)}
           >
             <motion.div
@@ -249,11 +249,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.2 }}
-              className="bg-card border border-border rounded-lg shadow-xl max-w-md w-full p-6"
+              className="bg-card/96 border border-border rounded-[24px] shadow-[0_24px_56px_rgba(45,38,28,0.18)] max-w-md w-full p-6 backdrop-blur-md"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0">
+                <div className="w-10 h-10 rounded-[14px] overflow-hidden shrink-0 border border-border-primary bg-bg-elevated">
                   <img src="/command-center-mark.png" alt="Samins Command Center" className="w-full h-full object-cover" />
                 </div>
                 <div>

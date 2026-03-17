@@ -12,7 +12,7 @@ interface ProjectsOverviewProps {
 // Generate consistent colors for projects based on name
 const getProjectColor = (name: string) => {
   const colors = [
-    '#3D9B94', '#a78bfa', '#4ade80', '#fbbf24', '#f87171', '#60a5fa', '#f472b6', '#34d399',
+    '#6677d8', '#8e84b8', '#6f8e7f', '#be9366', '#c06b63', '#7aa7ba', '#8f8a80', '#9da7c8',
   ];
   const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   return colors[hash % colors.length];
@@ -32,14 +32,14 @@ export default function ProjectsOverview({ projects }: ProjectsOverviewProps) {
   };
 
   return (
-    <div className="rounded-none border border-border-primary bg-bg-secondary overflow-hidden">
+    <div className="border border-border-primary bg-bg-secondary overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.48)]">
       {/* Header */}
       <div className="px-5 py-4 border-b border-border-primary flex items-center justify-between">
         <div className="flex items-center gap-2">
           <FolderKanban className="w-4 h-4 text-accent-amber" />
           <h3 className="text-sm font-medium">Projects</h3>
         </div>
-        <Link href="/projects" className="text-xs text-accent-cyan hover:underline">
+        <Link href="/projects" className="text-xs font-medium text-primary hover:underline">
           View all →
         </Link>
       </div>
@@ -55,7 +55,7 @@ export default function ProjectsOverview({ projects }: ProjectsOverviewProps) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="relative px-5 py-4 hover:bg-bg-tertiary/50 transition-colors cursor-pointer"
+              className="relative px-5 py-4 hover:bg-bg-tertiary/60 transition-colors cursor-pointer"
             >
               {/* Color indicator */}
               <div

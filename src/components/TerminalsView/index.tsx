@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { isElectron } from '@/hooks/useElectron';
 import { DndContext } from '@dnd-kit/core';
 import { useElectronAgents, useElectronFS, useElectronSkills } from '@/hooks/useElectron';
@@ -293,127 +294,155 @@ export default function TerminalsView() {
     return () => clearTimeout(timer);
   }, [viewFullscreen, multiTerminal]);
 
+  useEffect(() => {
+    if (!viewFullscreen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [viewFullscreen]);
+
   const runningCount = filteredAgents.filter(a => a.status === 'running' || a.status === 'waiting').length;
+
+  const terminalsChrome = (
+    <>
+      {/* Broadcast overlay */}
+      <BroadcastIndicator active={broadcast.broadcastMode} />
+
+      {/* Top toolbar */}
+      <GlobalToolbar
+        layout={gridPreset}
+        onLayoutChange={handleLayoutChange}
+        broadcastMode={broadcast.broadcastMode}
+        onToggleBroadcast={broadcast.toggleBroadcast}
+        onStartAll={handleStartAll}
+        onStopAll={handleStopAll}
+        onNewAgent={() => setShowNewChatModal(true)}
+        runningCount={runningCount}
+        totalCount={filteredAgents.length}
+        fontSize={multiTerminal.fontSize}
+        onZoomIn={multiTerminal.zoomIn}
+        onZoomOut={multiTerminal.zoomOut}
+        onZoomReset={multiTerminal.zoomReset}
+        isViewFullscreen={viewFullscreen}
+        onToggleViewFullscreen={() => setViewFullscreen(prev => !prev)}
+        isCustomTabActive={tabManager.isCustomTabActive}
+        allAgents={agents}
+        currentTabAgentIds={currentTabAgentIds}
+        onAddAgentToTab={handleAddAgentToTab}
+        disabledPresets={disabledPresets}
+      />
+
+      {/* Custom tab bar — top */}
+      <CustomTabBar
+        tabs={tabManager.customTabs}
+        activeTab={tabManager.activeTab}
+        canCreateTab={tabManager.canCreateTab}
+        onSelectTab={(tabId) => tabManager.setActiveTab({ type: 'custom', tabId })}
+        onCreateTab={tabManager.createTab}
+        onDeleteTab={tabManager.deleteTab}
+        onRenameTab={tabManager.renameTab}
+        onReorderTabs={tabManager.reorderTabs}
+      />
+
+      {/* Terminal grid — takes full space, relative for sidebar panel */}
+      <div className="flex-1 min-h-0 relative">
+        <TerminalGrid
+          agents={filteredAgents}
+          visiblePanels={grid.visiblePanels}
+          rglLayout={grid.rglLayout}
+          cols={grid.cols}
+          rows={grid.gridDefinition.rows}
+          onDragStop={grid.onDragStop}
+          broadcastMode={broadcast.broadcastMode}
+          focusedPanelId={focusedPanelId}
+          fullscreenPanelId={grid.fullscreenPanelId}
+          isLoading={isLoading}
+          isEditable={isEditable}
+          tabType={tabType}
+          onRegisterContainer={multiTerminal.registerContainer}
+          onStartAgent={handleStartAgent}
+          onStopAgent={handleStopAgent}
+          onRemoveAgent={handleRemoveAgent}
+          onClearTerminal={multiTerminal.clearTerminal}
+          onFullscreenPanel={grid.fullscreenPanel}
+          onExitFullscreen={grid.exitFullscreen}
+          onFocusPanel={handleFocusPanel}
+          onContextMenu={contextMenu.openMenu}
+          onFitAll={multiTerminal.fitAll}
+        />
+
+        {/* Sidebar panel — overlays grid from the right */}
+        <Sidebar
+          open={panelOpen}
+          onClose={() => setPanelOpen(false)}
+          agents={filteredAgents}
+          focusedPanelId={focusedPanelId}
+          onFocusPanel={handleFocusPanel}
+          onStartAgent={handleStartAgent}
+          onStopAgent={handleStopAgent}
+          installedSkills={installedSkills}
+        />
+      </div>
+
+      {/* Project tab bar — bottom */}
+      <ProjectTabBar
+        agents={agents}
+        activeTab={tabManager.activeTab}
+        onSelectProject={(path) => tabManager.setActiveTab({ type: 'project', projectPath: path })}
+        panelOpen={panelOpen}
+        onTogglePanel={() => setPanelOpen(prev => !prev)}
+      />
+
+      {/* Status bar */}
+      <StatusBar agents={filteredAgents} />
+
+      {/* Context menu */}
+      <ContextMenu
+        state={contextMenu.menuState}
+        agent={contextMenu.menuState.agentId ? agents.find(a => a.id === contextMenu.menuState.agentId) || null : null}
+        onClose={contextMenu.closeMenu}
+        onStart={handleStartAgent}
+        onStop={handleStopAgent}
+        onClear={multiTerminal.clearTerminal}
+        onFullscreen={grid.fullscreenPanel}
+        onCopyOutput={handleCopyOutput}
+      />
+
+      {/* New Chat Modal */}
+      {showNewChatModal && (
+        <NewChatModal
+          open={showNewChatModal}
+          onClose={() => setShowNewChatModal(false)}
+          onSubmit={handleNewAgent}
+          projects={projects}
+          onBrowseFolder={openFolderDialog}
+          installedSkills={installedSkills}
+          onRefreshSkills={refreshSkills}
+        />
+      )}
+    </>
+  );
 
   return (
     <DndContext sensors={dnd.sensors} onDragEnd={dnd.handleDragEnd}>
-      <div className={`flex flex-col overflow-hidden ${viewFullscreen ? 'fixed inset-0 z-[100] bg-background' : 'h-full w-full relative'}`}>
-        {/* Broadcast overlay */}
-        <BroadcastIndicator active={broadcast.broadcastMode} />
-
-        {/* Top toolbar */}
-        <GlobalToolbar
-          layout={gridPreset}
-          onLayoutChange={handleLayoutChange}
-          broadcastMode={broadcast.broadcastMode}
-          onToggleBroadcast={broadcast.toggleBroadcast}
-          onStartAll={handleStartAll}
-          onStopAll={handleStopAll}
-          onNewAgent={() => setShowNewChatModal(true)}
-          runningCount={runningCount}
-          totalCount={filteredAgents.length}
-          fontSize={multiTerminal.fontSize}
-          onZoomIn={multiTerminal.zoomIn}
-          onZoomOut={multiTerminal.zoomOut}
-          onZoomReset={multiTerminal.zoomReset}
-          isViewFullscreen={viewFullscreen}
-          onToggleViewFullscreen={() => setViewFullscreen(prev => !prev)}
-          isCustomTabActive={tabManager.isCustomTabActive}
-          allAgents={agents}
-          currentTabAgentIds={currentTabAgentIds}
-          onAddAgentToTab={handleAddAgentToTab}
-          disabledPresets={disabledPresets}
-        />
-
-        {/* Custom tab bar — top */}
-        <CustomTabBar
-          tabs={tabManager.customTabs}
-          activeTab={tabManager.activeTab}
-          canCreateTab={tabManager.canCreateTab}
-          onSelectTab={(tabId) => tabManager.setActiveTab({ type: 'custom', tabId })}
-          onCreateTab={tabManager.createTab}
-          onDeleteTab={tabManager.deleteTab}
-          onRenameTab={tabManager.renameTab}
-          onReorderTabs={tabManager.reorderTabs}
-        />
-
-        {/* Terminal grid — takes full space, relative for sidebar panel */}
-        <div className="flex-1 min-h-0 relative">
-          <TerminalGrid
-            agents={filteredAgents}
-            visiblePanels={grid.visiblePanels}
-            rglLayout={grid.rglLayout}
-            cols={grid.cols}
-            rows={grid.gridDefinition.rows}
-            onDragStop={grid.onDragStop}
-            broadcastMode={broadcast.broadcastMode}
-            focusedPanelId={focusedPanelId}
-            fullscreenPanelId={grid.fullscreenPanelId}
-            isLoading={isLoading}
-            isEditable={isEditable}
-            tabType={tabType}
-            onRegisterContainer={multiTerminal.registerContainer}
-            onStartAgent={handleStartAgent}
-            onStopAgent={handleStopAgent}
-            onRemoveAgent={handleRemoveAgent}
-            onClearTerminal={multiTerminal.clearTerminal}
-            onFullscreenPanel={grid.fullscreenPanel}
-            onExitFullscreen={grid.exitFullscreen}
-            onFocusPanel={handleFocusPanel}
-            onContextMenu={contextMenu.openMenu}
-            onFitAll={multiTerminal.fitAll}
-          />
-
-          {/* Sidebar panel — overlays grid from the right */}
-          <Sidebar
-            open={panelOpen}
-            onClose={() => setPanelOpen(false)}
-            agents={filteredAgents}
-            focusedPanelId={focusedPanelId}
-            onFocusPanel={handleFocusPanel}
-            onStartAgent={handleStartAgent}
-            onStopAgent={handleStopAgent}
-            installedSkills={installedSkills}
-          />
-        </div>
-
-        {/* Project tab bar — bottom */}
-        <ProjectTabBar
-          agents={agents}
-          activeTab={tabManager.activeTab}
-          onSelectProject={(path) => tabManager.setActiveTab({ type: 'project', projectPath: path })}
-          panelOpen={panelOpen}
-          onTogglePanel={() => setPanelOpen(prev => !prev)}
-        />
-
-        {/* Status bar */}
-        <StatusBar agents={filteredAgents} />
-
-        {/* Context menu */}
-        <ContextMenu
-          state={contextMenu.menuState}
-          agent={contextMenu.menuState.agentId ? agents.find(a => a.id === contextMenu.menuState.agentId) || null : null}
-          onClose={contextMenu.closeMenu}
-          onStart={handleStartAgent}
-          onStop={handleStopAgent}
-          onClear={multiTerminal.clearTerminal}
-          onFullscreen={grid.fullscreenPanel}
-          onCopyOutput={handleCopyOutput}
-        />
-
-        {/* New Chat Modal */}
-        {showNewChatModal && (
-          <NewChatModal
-            open={showNewChatModal}
-            onClose={() => setShowNewChatModal(false)}
-            onSubmit={handleNewAgent}
-            projects={projects}
-            onBrowseFolder={openFolderDialog}
-            installedSkills={installedSkills}
-            onRefreshSkills={refreshSkills}
-          />
+      {viewFullscreen && typeof document !== 'undefined'
+        ? createPortal(
+          <div className="fixed inset-0 z-[120] bg-[rgba(245,238,230,0.78)] p-3 backdrop-blur-sm lg:p-5">
+            <div className="flex h-full flex-col overflow-hidden rounded-[24px] border border-border bg-card shadow-[0_30px_80px_rgba(57,47,32,0.18)]">
+              {terminalsChrome}
+            </div>
+          </div>,
+          document.body
+        )
+        : (
+          <div className="relative flex h-full w-full flex-col overflow-hidden">
+            {terminalsChrome}
+          </div>
         )}
-      </div>
     </DndContext>
   );
 }

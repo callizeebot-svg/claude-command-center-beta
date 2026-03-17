@@ -62,7 +62,7 @@ export default function GlobalToolbar({
   disabledPresets,
 }: GlobalToolbarProps) {
   return (
-    <div className="flex items-center gap-2 px-3 py-2 bg-card border-b border-border !rounded-b-none">
+    <div className="window-no-drag flex items-center gap-2 px-3 py-2 bg-card border-b border-border !rounded-b-none">
       {/* Left section */}
       <div className="flex items-center gap-2">
         {/* Layout selector — only for custom tabs */}
@@ -152,15 +152,17 @@ export default function GlobalToolbar({
         <button
           onClick={onToggleViewFullscreen}
           className={`
-            flex items-center gap-1.5 px-2 py-1.5 text-xs transition-colors
+            inline-flex h-9 items-center justify-center gap-1.5 rounded-full border px-3 text-xs font-medium transition-colors
             ${isViewFullscreen
-              ? 'bg-primary/15 text-primary'
-              : 'text-muted-foreground hover:text-foreground hover:bg-primary/5'
+              ? 'border-border-accent bg-primary/12 text-primary shadow-[0_8px_20px_rgba(102,119,216,0.14)]'
+              : 'border-border-primary bg-bg-secondary text-text-secondary hover:border-border-accent hover:bg-bg-elevated hover:text-foreground'
             }
           `}
-          title={isViewFullscreen ? 'Exit fullscreen (Esc)' : 'Fullscreen'}
+          title={isViewFullscreen ? 'Exit focus view (Esc)' : 'Focus terminals'}
+          aria-pressed={isViewFullscreen}
         >
           {isViewFullscreen ? <Minimize className="w-3.5 h-3.5" /> : <Maximize className="w-3.5 h-3.5" />}
+          <span className="hidden xl:inline">{isViewFullscreen ? 'Exit Focus' : 'Focus View'}</span>
         </button>
 
         {/* New Agent button — always visible */}

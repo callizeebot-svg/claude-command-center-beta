@@ -17,34 +17,34 @@ interface StatsCardProps {
 
 const colorMap = {
   cyan: {
-    bg: 'bg-white/5',
-    text: 'text-white',
-    border: 'hover:border-white/30',
+    bg: 'bg-accent-cyan/14',
+    text: 'text-accent-cyan',
+    border: 'hover:border-accent-cyan/30',
   },
   green: {
-    bg: 'bg-white/5',
-    text: 'text-white',
-    border: 'hover:border-white/30',
+    bg: 'bg-accent-green/14',
+    text: 'text-accent-green',
+    border: 'hover:border-accent-green/30',
   },
   amber: {
-    bg: 'bg-white/5',
-    text: 'text-white',
-    border: 'hover:border-white/30',
+    bg: 'bg-accent-amber/14',
+    text: 'text-accent-amber',
+    border: 'hover:border-accent-amber/30',
   },
   purple: {
-    bg: 'bg-white/5',
-    text: 'text-white',
-    border: 'hover:border-white/30',
+    bg: 'bg-accent-purple/14',
+    text: 'text-accent-purple',
+    border: 'hover:border-accent-purple/30',
   },
   red: {
-    bg: 'bg-white/5',
-    text: 'text-white',
-    border: 'hover:border-white/30',
+    bg: 'bg-accent-red/14',
+    text: 'text-accent-red',
+    border: 'hover:border-accent-red/30',
   },
   blue: {
-    bg: 'bg-white/5',
-    text: 'text-white',
-    border: 'hover:border-white/30',
+    bg: 'bg-accent-blue/14',
+    text: 'text-accent-blue',
+    border: 'hover:border-accent-blue/30',
   },
 };
 
@@ -56,15 +56,15 @@ export default function StatsCard({ title, value, subtitle, icon: Icon, color, t
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={`
-        relative overflow-hidden border border-border
-        bg-card p-6 transition-all duration-200
-        hover:border-white/30 hover:shadow-elevated
+        relative overflow-hidden border border-border bg-card p-6 transition-all duration-200
+        shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]
+        ${colors.border} hover:shadow-elevated
       `}
     >
       <div className="flex items-start justify-between">
         <div className="space-y-2">
           <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <p className="text-3xl font-bold tracking-tight text-foreground">{value}</p>
+          <p className="text-3xl font-semibold tracking-[-0.04em] text-foreground">{value}</p>
           {subtitle && (
             <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
           )}
@@ -76,7 +76,7 @@ export default function StatsCard({ title, value, subtitle, icon: Icon, color, t
             </div>
           )}
         </div>
-        <div className={`${colors.bg} ${colors.text} p-3`}>
+        <div className={`${colors.bg} ${colors.text} rounded-[14px] border border-current/12 p-3`}>
           <Icon className="w-5 h-5" />
         </div>
       </div>

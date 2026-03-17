@@ -15,7 +15,7 @@
     "brand:assets": "node scripts/generate-brand-assets.mjs",
     "brand:screenshots": "node scripts/refresh-screenshots.mjs",
     "electron:dev": "concurrently \"npm run dev\" \"npm run electron:start\"",
-    "electron:start": "wait-on http://localhost:3000 && tsc -p electron/tsconfig.json && NODE_ENV=development electron .",
+    "electron:start": "wait-on http://localhost:3000 && tsc -p electron/tsconfig.json && env -u ELECTRON_RUN_AS_NODE NODE_ENV=development electron .",
     "electron:build": "node scripts/build-electron.mjs --mac",
     "electron:build:local": "node scripts/build-electron.mjs --dir --mac --config scripts/electron-builder.local.cjs",
     "electron:release:mac": "node scripts/build-electron.mjs --mac --config scripts/electron-builder.release.cjs",

@@ -1,46 +1,70 @@
-import { autoUpdater, UpdateInfo } from 'electron-updater';
 import { BrowserWindow, app } from 'electron';
+import type { AppUpdater, UpdateInfo } from 'electron-updater';
 import { GITHUB_REPO } from '../constants';
 
-// Don't download until user clicks "Download"
-autoUpdater.autoDownload = false;
-// Install on next quit after download completes
-autoUpdater.autoInstallOnAppQuit = true;
+let autoUpdaterPromise: Promise<AppUpdater | null> | null = null;
+
+async function getAutoUpdater(): Promise<AppUpdater | null> {
+  if (!app.isPackaged) {
+    return null;
+  }
+
+  if (!autoUpdaterPromise) {
+    autoUpdaterPromise = import('electron-updater')
+      .then(({ autoUpdater }) => {
+        autoUpdater.autoDownload = false;
+        autoUpdater.autoInstallOnAppQuit = true;
+        return autoUpdater;
+      })
+      .catch((err) => {
+        console.error('Failed to load electron-updater:', err);
+        return null;
+      });
+  }
+
+  return autoUpdaterPromise;
+}
 
 export function initAutoUpdater(getMainWindow: () => BrowserWindow | null) {
-  autoUpdater.on('update-available', (info: UpdateInfo) => {
-    getMainWindow()?.webContents.send('app:update-available', {
-      currentVersion: autoUpdater.currentVersion.version,
-      latestVersion: info.version,
-      releaseNotes: typeof info.releaseNotes === 'string' ? info.releaseNotes : '',
-      hasUpdate: true,
+  void getAutoUpdater().then((autoUpdater) => {
+    if (!autoUpdater) {
+      return;
+    }
+
+    autoUpdater.on('update-available', (info: UpdateInfo) => {
+      getMainWindow()?.webContents.send('app:update-available', {
+        currentVersion: autoUpdater.currentVersion.version,
+        latestVersion: info.version,
+        releaseNotes: typeof info.releaseNotes === 'string' ? info.releaseNotes : '',
+        hasUpdate: true,
+      });
     });
-  });
 
-  autoUpdater.on('update-not-available', (info: UpdateInfo) => {
-    getMainWindow()?.webContents.send('app:update-not-available', {
-      currentVersion: autoUpdater.currentVersion.version,
-      latestVersion: info.version,
+    autoUpdater.on('update-not-available', (info: UpdateInfo) => {
+      getMainWindow()?.webContents.send('app:update-not-available', {
+        currentVersion: autoUpdater.currentVersion.version,
+        latestVersion: info.version,
+      });
     });
-  });
 
-  autoUpdater.on('download-progress', (progress) => {
-    getMainWindow()?.webContents.send('app:update-progress', {
-      percent: progress.percent,
-      bytesPerSecond: progress.bytesPerSecond,
-      transferred: progress.transferred,
-      total: progress.total,
+    autoUpdater.on('download-progress', (progress) => {
+      getMainWindow()?.webContents.send('app:update-progress', {
+        percent: progress.percent,
+        bytesPerSecond: progress.bytesPerSecond,
+        transferred: progress.transferred,
+        total: progress.total,
+      });
     });
-  });
 
-  autoUpdater.on('update-downloaded', () => {
-    getMainWindow()?.webContents.send('app:update-downloaded');
-  });
+    autoUpdater.on('update-downloaded', () => {
+      getMainWindow()?.webContents.send('app:update-downloaded');
+    });
 
-  autoUpdater.on('error', (err) => {
-    // Don't broadcast error if we're going to fall back to GitHub API
-    // The fallback is handled in checkForUpdates()
-    console.error('autoUpdater error:', err.message);
+    autoUpdater.on('error', (err) => {
+      // Don't broadcast error if we're going to fall back to GitHub API
+      // The fallback is handled in checkForUpdates()
+      console.error('autoUpdater error:', err.message);
+    });
   });
 }
 
@@ -111,8 +135,13 @@ export function setMainWindowGetter(fn: () => BrowserWindow | null) {
 }
 
 export async function checkForUpdates() {
+  const autoUpdater = await getAutoUpdater();
+
+  if (!autoUpdater) {
+    return { devMode: true, currentVersion: app.getVersion() };
+  }
+
   try {
-    // autoUpdater.checkForUpdates() returns null when app is not packed (dev mode)
     const result = await autoUpdater.checkForUpdates();
     if (result === null) {
       return { devMode: true, currentVersion: app.getVersion() };
@@ -136,10 +165,23 @@ export async function checkForUpdates() {
   }
 }
 
-export function downloadUpdate() {
+export async function downloadUpdate() {
+  const autoUpdater = await getAutoUpdater();
+
+  if (!autoUpdater) {
+    return { devMode: true };
+  }
+
   return autoUpdater.downloadUpdate();
 }
 
-export function quitAndInstall() {
+export async function quitAndInstall() {
+  const autoUpdater = await getAutoUpdater();
+
+  if (!autoUpdater) {
+    return { devMode: true };
+  }
+
   autoUpdater.quitAndInstall();
+  return { devMode: false };
 }

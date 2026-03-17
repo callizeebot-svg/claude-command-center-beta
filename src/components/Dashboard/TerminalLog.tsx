@@ -36,7 +36,7 @@ export default function TerminalLog({ history }: TerminalLogProps) {
   };
 
   return (
-    <div className="rounded-none border border-border-primary bg-bg-secondary overflow-hidden">
+    <div className="border border-border-primary bg-bg-secondary overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.48)]">
       {/* Header - looks like terminal titlebar */}
       <div className="px-4 py-3 border-b border-border-primary bg-bg-tertiary flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -51,7 +51,7 @@ export default function TerminalLog({ history }: TerminalLogProps) {
       </div>
 
       {/* Log content */}
-      <div className="p-4 h-64 overflow-y-auto font-mono text-xs leading-relaxed bg-[#0d0e12]">
+      <div className="p-4 h-64 overflow-y-auto font-mono text-xs leading-relaxed bg-[#17181d]">
         <AnimatePresence mode="popLayout">
           {recentHistory.map((entry, index) => (
             <motion.div
@@ -60,7 +60,7 @@ export default function TerminalLog({ history }: TerminalLogProps) {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="flex items-start gap-2 py-0.5 hover:bg-white/[0.02]"
+              className="flex items-start gap-2 rounded-[10px] px-2 py-1 hover:bg-white/[0.03]"
             >
               <span className="text-text-muted shrink-0">{formatTime(entry.timestamp)}</span>
               <span className="text-accent-purple shrink-0">[{getProjectShortName(entry.project)}]</span>
