@@ -2,11 +2,19 @@
 
 A beautiful desktop app to orchestrate your [Claude Code](https://claude.ai/code) ,[Codex](https://chatgpt.com/codex), [Gemini](https://geminicli.com/) and local agents. Deploy, monitor, and debug — all from one delightful interface. Open source.
 
+[![Latest Release](https://img.shields.io/github/v/release/Samin12/claude-command-center-beta?label=latest%20release)](https://github.com/Samin12/claude-command-center-beta/releases/latest)
+[![Download macOS DMG](https://img.shields.io/badge/download-macOS%20DMG-black?logo=apple)](https://github.com/Samin12/claude-command-center-beta/releases/latest/download/Samins-Command-Center-mac-arm64.dmg)
+
 ![Samins Command Center](screenshots/background-2.png)
 
 ![Samins Command Center Dashboard](screenshots/0.png)
 
 ## Installation
+
+### Direct Download
+
+- macOS (Apple Silicon DMG): [Download the latest DMG](https://github.com/Samin12/claude-command-center-beta/releases/latest/download/Samins-Command-Center-mac-arm64.dmg)
+- All releases: [github.com/Samin12/claude-command-center-beta/releases](https://github.com/Samin12/claude-command-center-beta/releases)
 
 ### macOS Install
 
